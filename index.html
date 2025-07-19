@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B.Tech Roadmap Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #1e293b;
+            --background-light: #f1f5f9;
+            --background-dark: #0f172a;
+            --text-light: #0f172a;
+            --text-dark: #f1f5f9;
+            --card-bg-light: #ffffff;
+            --card-bg-dark: #1e293b;
+            --border-light: #e2e8f0;
+            --border-dark: #334155;
+            --link-color-light: #2563eb;
+            --link-color-dark: #60a5fa;
+        }
+        html.dark {
+            --primary-color: #60a5fa;
+            --secondary-color: #f1f5f9;
+            --background-light: #0f172a;
+            --background-dark: #0f172a;
+            --text-light: #f1f5f9;
+            --text-dark: #f1f5f9;
+            --card-bg-light: #1e293b;
+            --card-bg-dark: #1e293b;
+            --border-light: #334155;
+            --border-dark: #334155;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-light);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card {
+            background-color: var(--card-bg-light);
+            border: 1px solid var(--border-light);
+        }
+        .progress-bar-bg {
+            background-color: var(--border-light);
+        }
+        .progress-bar-fill {
+            background-color: var(--primary-color);
+        }
+        .dropdown, .search-input {
+            background-color: var(--card-bg-light);
+            border: 1px solid var(--border-light);
+        }
+        .lang-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .resource-link {
+            color: var(--link-color-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        html.dark .resource-link {
+            color: var(--link-color-dark);
+        }
+        .resource-link:hover {
+            text-decoration: underline;
+        }
+        [data-collapsible-content] {
+            transition: max-height 0.5s ease-in-out;
+            overflow: hidden;
+        }
+        .gemini-btn {
+            background-color: #8b5cf6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 8px;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+        .gemini-btn:hover {
+            background-color: #7c3aed;
+        }
+        #ai-modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8b5cf6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 md:p-8">
+
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-500 dark:text-blue-400" data-lang-key="title">B.Tech Roadmap Hub</h1>
+            <p class="mt-2 text-lg text-slate-600 dark:text-slate-400" data-lang-key="subtitle">Your AI-powered guide to a successful engineering career.</p>
+        </header>
+
+        <!-- Controls Section -->
+        <div class="sticky top-0 z-10 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm p-4 rounded-xl shadow-md mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-center">
+                <!-- Branch Filter -->
+                <div class="md:col-span-1 lg:col-span-1">
+                    <label for="branch-select" class="block text-sm font-medium mb-1" data-lang-key="filter_branch">Branch</label>
+                    <select id="branch-select" class="w-full p-2.5 rounded-lg border bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </select>
+                </div>
+
+                <!-- Goal Filter -->
+                <div class="md:col-span-1 lg:col-span-1">
+                    <label for="goal-select" class="block text-sm font-medium mb-1" data-lang-key="filter_goal">Career Goal</label>
+                    <select id="goal-select" class="w-full p-2.5 rounded-lg border bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </select>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="md:col-span-3 lg:col-span-2">
+                     <label for="search-input" class="block text-sm font-medium mb-1" data-lang-key="search_label">Search Topics</label>
+                    <input type="text" id="search-input" class="w-full p-2.5 rounded-lg border bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., Python, GATE, React...">
+                </div>
+
+                <!-- Settings -->
+                <div class="flex items-center justify-center md:justify-end space-x-2 md:col-span-3 lg:col-span-1 mt-4 lg:mt-0 self-end">
+                    <!-- Language Selector -->
+                    <div class="flex bg-slate-200 dark:bg-slate-700 rounded-lg p-1">
+                        <button class="lang-btn px-3 py-1 text-sm rounded-md" data-lang="en">EN</button>
+                        <button class="lang-btn px-3 py-1 text-sm rounded-md" data-lang="hi">HI</button>
+                        <button class="lang-btn px-3 py-1 text-sm rounded-md" data-lang="te">TE</button>
+                    </div>
+                    <!-- Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" class="p-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-3.536a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.464-4.95l-.707-.707a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414zm-2.121 3.536a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1z" clip-rule="evenodd" /></svg>
+                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Motivational Quote -->
+        <div id="motivational-quote" class="my-6 p-4 bg-blue-100 dark:bg-blue-900/50 border-l-4 border-blue-500 rounded-r-lg text-slate-700 dark:text-blue-200 italic">
+        </div>
+
+        <!-- Roadmap Display Area -->
+        <div id="roadmap-container" class="space-y-6">
+        </div>
+        
+        <!-- No Roadmap Selected / No Results Message -->
+        <div id="message-container" class="hidden text-center py-16">
+            <h3 class="text-2xl font-semibold text-slate-700 dark:text-slate-300" data-lang-key="no_roadmap_title"></h3>
+            <p class="text-slate-500 dark:text-slate-400 mt-2" data-lang-key="no_roadmap_desc"></p>
+        </div>
+
+    </div>
+
+    <!-- AI Modal -->
+    <div id="ai-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div id="ai-modal" class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 id="ai-modal-title" class="text-xl font-semibold text-slate-800 dark:text-slate-200">✨ AI Assistant</h3>
+                <button id="ai-modal-close" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="ai-modal-content" class="p-6 overflow-y-auto">
+                <!-- AI content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const roadmapData = {};
+            const translations = {};
+            const quotes = {};
+
+            // --- STATE ---
+            let currentLang = 'en';
+            let currentBranch = '';
+            let currentGoal = '';
+            let progress = {};
+            const showdownConverter = new showdown.Converter();
+
+            // --- DOM ELEMENTS ---
+            const branchSelect = document.getElementById('branch-select');
+            const goalSelect = document.getElementById('goal-select');
+            const searchInput = document.getElementById('search-input');
+            const roadmapContainer = document.getElementById('roadmap-container');
+            const messageContainer = document.getElementById('message-container');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const quoteContainer = document.getElementById('motivational-quote');
+            const aiModalOverlay = document.getElementById('ai-modal-overlay');
+            const aiModal = document.getElementById('ai-modal');
+            const aiModalTitle = document.getElementById('ai-modal-title');
+            const aiModalContent = document.getElementById('ai-modal-content');
+            const aiModalClose = document.getElementById('ai-modal-close');
+
+            // --- INITIALIZATION ---
+            function init() {
+                loadData();
+                loadDarkMode();
+                loadLanguage();
+                loadProgress();
+                populateDropdowns();
+                loadSavedRoadmap();
+                updateUI();
+                setupEventListeners();
+                displayRandomQuote();
+            }
+
+            // --- DATA LOADING ---
+            function loadData() {
+                // Shared roadmaps
+                const sdePath = { "name": { "en": "Software Development", "hi": "सॉफ्टवेयर डेवलपमेंट", "te": "సాఫ్ట్‌వేర్ డెవలప్‌మెంట్" }, "roadmap": [ { "title": { "en": "Year 1: Foundations", "hi": "वर्ष 1: नींव", "te": "సంవత్సరం 1: పునాదులు" }, "content": [ { "type": "subject", "text": { "en": "C Programming & Data Structures (Basics)", "hi": "सी प्रोग्रामिंग और डेटा संरचनाएं (मूल बातें)", "te": "సి ప్రోగ్రామింగ్ & డేటా స్ట్రక్చర్స్ (బేసిక్స్)" } }, { "type": "skill", "text": { "en": "Learn Git & GitHub for version control", "hi": "संस्करण नियंत्रण के लिए गिट और गिटहब सीखें", "te": "వెర్షన్ కంట్రోల్ కోసం గిట్ & గిట్‌హబ్ నేర్చుకోండి" } }, { "type": "resource", "text": { "en": { "title": "Neso Academy - C Programming Playlist", "url": "https://www.youtube.com/playlist?list=PLBlnK6fEyqRhX6r2uhhlubuF5QextdCSM" }, "hi": { "title": "नेसो अकादमी - सी प्रोग्रामिंग प्लेलिस्ट", "url": "https://www.youtube.com/playlist?list=PLBlnK6fEyqRhX6r2uhhlubuF5QextdCSM" }, "te": { "title": "నీసో అకాడమీ - సి ప్రోగ్రామింగ్ ప్లేలిస్ట్", "url": "https://www.youtube.com/playlist?list=PLBlnK6fEyqRhX6r2uhhlubuF5QextdCSM" } } } ] }, { "title": { "en": "Year 2: Core Skills", "hi": "वर्ष 2: मुख्य कौशल", "te": "సంవత్సరం 2: ప్రధాన నైపుణ్యాలు" }, "content": [ { "type": "subject", "text": { "en": "Object-Oriented Programming (Java/C++), Advanced DSA", "hi": "ऑब्जेक्ट-ओरिएंटेड प्रोग्रामिंग (जावा/सी++), उन्नत डीएसए", "te": "ఆబ్జెక్ట్-ఓరియెంటెడ్ ప్రోగ్రామింగ్ (జావా/సి++), అధునాతన డిఎస్‌ఎ" } }, { "type": "skill", "text": { "en": "Learn a frontend framework (e.g., React)", "hi": "एक फ्रंटएंड फ्रेमवर्क सीखें (उदा., रिएक्ट)", "te": "ఒక ఫ్రంటెండ్ ఫ్రేమ్‌వర్క్ నేర్చుకోండి (ఉదా., రియాక్ట్)" } }, { "type": "resource", "text": { "en": { "title": "Practice DSA on LeetCode", "url": "https://leetcode.com/problemset/" }, "hi": { "title": "लीटकोड पर डीएसए का अभ्यास करें", "url": "https://leetcode.com/problemset/" }, "te": { "title": "లీట్‌కోడ్‌లో డిఎస్‌ఎ ప్రాక్టీస్ చేయండి", "url": "https://leetcode.com/problemset/" } } }, { "type": "project", "text": { "en": "Build a personal portfolio website using HTML, CSS, JS", "hi": "एचटीएमएल, सीएसएस, जेएस का उपयोग करके एक व्यक्तिगत पोर्टफोलियो वेबसाइट बनाएं", "te": "హెచ్‌టిఎంఎల్, సిఎస్‌ఎస్, జెఎస్ ఉపయోగించి వ్యక్తిగత పోర్ట్‌ఫోలియో వెబ్‌సైట్‌ను రూపొందించండి" } } ] }, { "title": { "en": "Year 3: Specialization", "hi": "वर्ष 3: विशेषज्ञता", "te": "సంవత్సరం 3: స్పెషలైజేషన్" }, "content": [ { "type": "subject", "text": { "en": "DBMS, OS, Computer Networks", "hi": "डीबीएमएस, ओएस, कंप्यूटर नेटवर्क", "te": "డిబిఎంఎస్, ఓఎస్, కంప్యూటర్ నెట్‌వర్క్స్" } }, { "type": "skill", "text": { "en": "Backend Development (Node.js/Express & MongoDB)", "hi": "बैकएंड डेवलपमेंट (नोड.जेएस/एक्सप्रेस और मोंगोडीबी)", "te": "బ్యాకెండ్ డెవలప్‌మెంట్ (నోడ్.జెఎస్/ఎక్స్‌ప్రెస్ & మోంగోడిబి)" } }, { "type": "resource", "text": { "en": { "title": "React Official Documentation", "url": "https://react.dev/" }, "hi": { "title": "रिएक्ट आधिकारिक दस्तावेज़ीकरण", "url": "https://react.dev/" }, "te": { "title": "రియాక్ట్ అధికారిక డాక్యుమెంటేషన్", "url": "https://react.dev/" } } }, { "type": "goal", "text": { "en": "Actively apply for internships", "hi": "इंटर्नशिप के लिए सक्रिय रूप से आवेदन करें", "te": "ఇంటర్న్‌షిప్‌ల కోసం చురుకుగా దరఖాస్తు చేసుకోండి" } } ] }, { "title": { "en": "Year 4: Placements", "hi": "वर्ष 4: प्लेसमेंट", "te": "సంవత్సరం 4: ప్లేస్‌మెంట్‌లు" }, "content": [ { "type": "skill", "text": { "en": "System Design fundamentals, Cloud Computing (AWS/Azure basics)", "hi": "सिस्टम डिजाइन की मूल बातें, क्लाउड कंप्यूटिंग (एडब्ल्यूएस/एज़्योर की मूल बातें)", "te": "సిస్టమ్ డిజైన్ ఫండమెంటల్స్, క్లౌడ్ కంప్యూటింగ్ (ఎడబ్ల్యుఎస్/అజూర్ బేసిక్స్)" } }, { "type": "resource", "text": { "en": { "title": "Gaurav Sen - System Design Playlist", "url": "https://www.youtube.com/playlist?list=PLMCXHnjXnTnvo5hGytpL72JmcCiZpIkrh" }, "hi": { "title": "गौरव सेन - सिस्टम डिजाइन प्लेलिस्ट", "url": "https://www.youtube.com/playlist?list=PLMCXHnjXnTnvo5hGytpL72JmcCiZpIkrh" }, "te": { "title": "గౌరవ్ సేన్ - సిస్టమ్ డిజైన్ ప్లేలిస్ట్", "url": "https://www.youtube.com/playlist?list=PLMCXHnjXnTnvo5hGytpL72JmcCiZpIkrh" } } }, { "type": "project", "text": { "en": "Build a full-stack MERN project (e.g., E-commerce site)", "hi": "एक फुल-स्टैक MERN प्रोजेक्ट बनाएं (उदा., ई-कॉमर्स साइट)", "te": "ఒక పూర్తి-స్టాక్ MERN ప్రాజెక్ట్‌ను రూపొందించండి (ఉదా., ఇ-కామర్స్ సైట్)" } } ] } ] };
+                const itJobsPath = { "name": { "en": "IT Jobs", "hi": "आईटी नौकरियां", "te": "ఐటి ఉద్యోగాలు" }, "roadmap": [ { "title": { "en": "Year 1-2: Build Foundation", "hi": "वर्ष 1-2: नींव बनाएं", "te": "సంవత్సరం 1-2: పునాదిని నిర్మించండి" }, "content": [ { "type": "skill", "text": { "en": "Learn one language well: Python or Java", "hi": "एक भाषा अच्छी तरह सीखें: पायथन या जावा", "te": "ఒక భాషను బాగా నేర్చుకోండి: పైథాన్ లేదా జావా" } }, { "type": "subject", "text": { "en": "Data Structures and Algorithms (DSA)", "hi": "डेटा संरचनाएं और एल्गोरिदम (डीएसए)", "te": "డేటా స్ట్రక్చర్స్ మరియు అల్గోరిథంలు (డిఎస్‌ఎ)" } }, { "type": "resource", "text": { "en": { "title": "Apna College - DSA Playlist", "url": "https://www.youtube.com/playlist?list=PLfqMhTW1gdZ_G_a1T3K16jFb9T2eA1gG2" }, "hi": { "title": "अपना कॉलेज - डीएसए प्लेलिस्ट", "url": "https://www.youtube.com/playlist?list=PLfqMhTW1gdZ_G_a1T3K16jFb9T2eA1gG2" }, "te": { "title": "అప్నా కాలేజ్ - డిఎస్‌ఎ ప్లేలిస్ట్", "url": "https://www.youtube.com/playlist?list=PLfqMhTW1gdZ_G_a1T3K16jFb9T2eA1gG2" } } } ] }, { "title": { "en": "Year 3: Development Skills", "hi": "वर्ष 3: विकास कौशल", "te": "సంవత్సరం 3: అభివృద్ధి నైపుణ్యాలు" }, "content": [ { "type": "subject", "text": { "en": "Learn basics of DBMS, OS, and Computer Networks", "hi": "डीबीएमएस, ओएस और कंप्यूटर नेटवर्क की मूल बातें जानें", "te": "డిబిఎంఎస్, ఓఎస్, మరియు కంప్యూటర్ నెట్‌వర్క్‌ల ప్రాథమికాలను తెలుసుకోండి" } }, { "type": "skill", "text": { "en": "Learn Web Development (MERN stack)", "hi": "वेब डेवलपमेंट (MERN स्टैक) सीखें", "te": "వెబ్ డెవలప్‌మెంట్ (MERN స్టాక్) నేర్చుకోండి" } }, { "type": "resource", "text": { "en": { "title": "CodeWithHarry - Web Dev Playlist", "url": "https://www.youtube.com/playlist?list=PLu0W_9lII9agq5TrH9XLIKQvv0iaF2X3w" }, "hi": { "title": "कोडविथहैरी - वेब देव प्लेलिस्ट", "url": "https://www.youtube.com/playlist?list=PLu0W_9lII9agq5TrH9XLIKQvv0iaF2X3w" }, "te": { "title": "కోడ్‌విత్‌హ్యారీ - వెబ్ డెవ్ ప్లేలిస్ట్", "url": "https://www.youtube.com/playlist?list=PLu0W_9lII9agq5TrH9XLIKQvv0iaF2X3w" } } }, { "type": "project", "text": { "en": "Build 2-3 good projects for your resume", "hi": "अपने बायोडाटा के लिए 2-3 अच्छी परियोजनाएँ बनाएँ", "te": "మీ రెజ్యూమె కోసం 2-3 మంచి ప్రాజెక్ట్‌లను రూపొందించండి" } } ] } ] };
+                const higherStudiesPath = { "name": { "en": "Higher Studies (MS Abroad)", "hi": "उच्च अध्ययन (विदेश में एमएस)", "te": "ఉన్నత చదువులు (విదేశాలలో ఎంఎస్)" }, "roadmap": [ { "title": { "en": "Year 2: Profile Building", "hi": "वर्ष 2: प्रोफाइल बिल्डिंग", "te": "సంవత్సరం 2: ప్రొఫైల్ బిల్డింగ్" }, "content": [ { "type": "goal", "text": { "en": "Maintain a high GPA (>8.5)", "hi": "एक उच्च जीपीए (>8.5) बनाए रखें", "te": "అధిక GPA (>8.5) నిర్వహించండి" } }, { "type": "project", "text": { "en": "Work on a research-oriented project with a professor", "hi": "एक प्रोफेसर के साथ एक शोध-उन्मुख परियोजना पर काम करें", "te": "ఒక ప్రొఫెసర్‌తో పరిశోధన-ఆధారిత ప్రాజెక్ట్‌పై పని చేయండి" } } ] }, { "title": { "en": "Year 3: Standardized Tests & Application Prep", "hi": "वर्ष 3: मानकीकृत परीक्षण और आवेदन की तैयारी", "te": "సంవత్సరం 3: ప్రామాణిక పరీక్షలు & అప్లికేషన్ ప్రిపరేషన్" }, "content": [ { "type": "skill", "text": { "en": "Prepare for GRE and TOEFL/IELTS", "hi": "जीआरई और टीओईएफएल/आईईएलटीएस की तैयारी करें", "te": "GRE మరియు TOEFL/IELTS కోసం సిద్ధం కండి" } }, { "type": "goal", "text": { "en": "Draft Statement of Purpose (SOP) and get Letters of Recommendation (LORs)", "hi": "उद्देश्य का विवरण (एसओपी) का मसौदा तैयार करें और सिफारिश पत्र (एलओआर) प्राप्त करें", "te": "స్టేట్‌మెంట్ ఆఫ్ పర్పస్ (SOP) డ్రాఫ్ట్ చేయండి మరియు సిఫార్సు లేఖలు (LORలు) పొందండి" } }, { "type": "resource", "text": { "en": { "title": "Magoosh GRE Prep", "url": "https://gre.magoosh.com/" }, "hi": { "title": "मैगूश जीआरई तैयारी", "url": "https://gre.magoosh.com/" }, "te": { "title": "మాగూష్ GRE ప్రిపరేషన్", "url": "https://gre.magoosh.com/" } } } ] }, { "title": { "en": "Year 4: Applications", "hi": "वर्ष 4: आवेदन", "te": "సంవత్సరం 4: దరఖాస్తులు" }, "content": [ { "type": "goal", "text": { "en": "Shortlist universities and start applying (Fall deadlines are usually Dec-Jan)", "hi": "विश्वविद्यालयों को शॉर्टलिस्ट करें और आवेदन करना शुरू करें (पतझड़ की समय सीमा आमतौर पर दिसंबर-जनवरी होती है)", "te": "విశ్వవిద్యాలయాలను షార్ట్‌లిస్ట్ చేయండి మరియు దరఖాస్తు చేయడం ప్రారంభించండి (పతనం గడువులు సాధారణంగా డిసెంబర్-జనవరి)" } } ] } ] };
+                const govtJobPath = { "name": { "en": "Govt. Jobs (SSC-JE/State AE)", "hi": "सरकारी नौकरियां (एसएससी-जेई/राज्य एई)", "te": "ప్రభుత్వ ఉద్యోగాలు (ఎస్‌ఎస్‌సి-జెఇ/రాష్ట్ర ఎఇ)" }, "roadmap": [ { "title": { "en": "Year 2-3: Technical Syllabus", "hi": "वर्ष 2-3: तकनीकी पाठ्यक्रम", "te": "సంవత్సరం 2-3: సాంకేతిక సిలబస్" }, "content": [ { "type": "subject", "text": { "en": "Cover all core subjects from your engineering syllabus", "hi": "अपने इंजीनियरिंग पाठ्यक्रम से सभी मुख्य विषयों को कवर करें", "te": "మీ ఇంజనీరింగ్ సిలబస్ నుండి అన్ని కోర్ సబ్జెక్టులను కవర్ చేయండి" } }, { "type": "resource", "text": { "en": { "title": "Made Easy / ACE Engineering Academy Notes", "url": "https://www.madeeasy.in/" }, "hi": { "title": "मेड ईज़ी / ऐस इंजीनियरिंग अकादमी नोट्स", "url": "https://www.madeeasy.in/" }, "te": { "title": "మేడ్ ఈజీ / ఏస్ ఇంజనీరింగ్ అకాడమీ నోట్స్", "url": "https://www.madeeasy.in/" } } } ] }, { "title": { "en": "Year 4: Non-Technical & Practice", "hi": "वर्ष 4: गैर-तकनीकी और अभ्यास", "te": "సంవత్సరం 4: నాన్-టెక్నికల్ & ప్రాక్టీస్" }, "content": [ { "type": "subject", "text": { "en": "General Awareness, Reasoning, and Aptitude", "hi": "सामान्य जागरूकता, तर्क और योग्यता", "te": "జనరల్ అవేర్‌నెస్, రీజనింగ్, మరియు ఆప్టిట్యూడ్" } }, { "type": "goal", "text": { "en": "Solve previous year question papers extensively", "hi": "पिछले वर्ष के प्रश्नपत्रों को बड़े पैमाने पर हल करें", "te": "గత సంవత్సరం ప్రశ్న పత్రాలను విస్తృతంగా పరిష్కరించండి" } } ] } ] };
+                const cybersecurityPath = { "name": { "en": "Cybersecurity", "hi": "साइबर सुरक्षा", "te": "సైబర్ సెక్యూరిటీ" }, "roadmap": [ { "title": { "en": "Year 2: Networking & Security Basics", "hi": "वर्ष 2: नेटवर्किंग और सुरक्षा की मूल बातें", "te": "సంవత్సరం 2: నెట్‌వర్కింగ్ & సెక్యూరిటీ బేసిక్స్" }, "content": [ { "type": "subject", "text": { "en": "Computer Networks, Operating Systems", "hi": "कंप्यूटर नेटवर्क, ऑपरेटिंग सिस्टम", "te": "కంప్యూటర్ నెట్‌వర్క్స్, ఆపరేటింగ్ సిస్టమ్స్" } }, { "type": "skill", "text": { "en": "Learn Linux fundamentals, Basic scripting (Python/Bash)", "hi": "लिनक्स की मूल बातें, बेसिक स्क्रिप्टिंग (पायथन/बैश) सीखें", "te": "లైనక్స్ ఫండమెంటల్స్, బేసిక్ స్క్రిప్టింగ్ (పైథాన్/బాష్) నేర్చుకోండి" } }, { "type": "resource", "text": { "en": { "title": "TryHackMe - Beginner Path", "url": "https://tryhackme.com/path/outline/beginner" }, "hi": { "title": "ट्राईहैकमी - शुरुआती पथ", "url": "https://tryhackme.com/path/outline/beginner" }, "te": { "title": "ట్రైహాక్‌మీ - బిగినర్ పాత్", "url": "https://tryhackme.com/path/outline/beginner" } } } ] }, { "title": { "en": "Year 3: Core Cybersecurity", "hi": "वर्ष 3: कोर साइबर सुरक्षा", "te": "సంవత్సరం 3: కోర్ సైబర్ సెక్యూరిటీ" }, "content": [ { "type": "subject", "text": { "en": "Cryptography, Network Security", "hi": "क्रिप्टोग्राफी, नेटवर्क सुरक्षा", "te": "క్రిప్టోగ్రఫీ, నెట్‌వర్క్ సెక్యూరిటీ" } }, { "type": "skill", "text": { "en": "Ethical Hacking concepts, Learn tools like Wireshark, Metasploit", "hi": "एथिकल हैकिंग अवधारणाएं, वायरशार्क, मेटास्प्लोइट जैसे उपकरण सीखें", "te": "ఎథికల్ హ్యాకింగ్ కాన్సెప్ట్స్, వైర్‌షార్క్, మెటాస్ప్లోయిట్ వంటి టూల్స్ నేర్చుకోండి" } }, { "type": "goal", "text": { "en": "Get certifications like CompTIA Security+", "hi": "CompTIA Security+ जैसे प्रमाणपत्र प्राप्त करें", "te": "CompTIA Security+ వంటి సర్టిఫికేషన్లను పొందండి" } } ] } ] };
+
+                Object.assign(roadmapData, {
+                    "cse": {
+                        "name": { "en": "Computer Science (CSE)", "hi": "कंप्यूटर विज्ञान (सीएसई)", "te": "కంప్యూటర్ సైన్స్ (సిఎస్‌ఇ)" },
+                        "goals": {
+                            "sde": sdePath,
+                            "gate": {"name":{"en":"GATE Exam","hi":"गेट परीक्षा","te":"గేట్ పరీక్ష"},"roadmap":[{"title":{"en":"Year 2-3: Core Subjects","hi":"वर्ष 2-3: मुख्य विषय","te":"సంవత్సరం 2-3: కోర్ సబ్జెక్టులు"},"content":[{"type":"subject","text":{"en":"Digital Logic, DSA, TOC, OS, DBMS, Networks","hi":"डिजिटल लॉजिक, डीएसए, टीओसी, ओएस, डीबीएमएस, नेटवर्क","te":"డిజిటల్ లాజిక్, డిఎస్‌ఎ, టిఓసి, ఓఎస్, డిబిఎంఎస్, నెట్‌వర్క్స్"}},{"type":"resource","text":{"en":{"title":"GeeksForGeeks - GATE CS Notes","url":"https://www.geeksforgeeks.org/gate-cs-notes/"},"hi":{"title":"गीक्सफॉरगीक्स - गेट सीएस नोट्स","url":"https://www.geeksforgeeks.org/gate-cs-notes/"},"te":{"title":"గీక్స్‌ఫర్‌గీక్స్ - గేట్ సిఎస్ నోట్స్","url":"https://www.geeksforgeeks.org/gate-cs-notes/"}}},{"type":"goal","text":{"en":"Join a reliable Test Series","hi":"एक विश्वसनीय टेस्ट सीरीज में शामिल हों","te":"ఒక విశ్వసనీయ టెస్ట్ సిరీస్‌లో చేరండి"}}]},{"title":{"en":"Year 4: Revision & Mocks","hi":"वर्ष 4: संशोधन और मॉक","te":"సంవత్సరం 4: పునశ్చరణ & మాక్స్"},"content":[{"type":"subject","text":{"en":"Engineering Mathematics, General Aptitude","hi":"इंजीनियरिंग गणित, सामान्य योग्यता","te":"ఇంజనీరింగ్ మ్యాథమెటిక్స్, జనరల్ ఆప్టిట్యూడ్"}},{"type":"resource","text":{"en":{"title":"GATE Overflow - Previous Year Questions","url":"https://gateoverflow.in/"},"hi":{"title":"गेट ओवरफ्लो - पिछले वर्ष के प्रश्न","url":"https://gateoverflow.in/"},"te":{"title":"గేట్ ఓవర్‌ఫ్లో - గత సంవత్సరం ప్రశ్నలు","url":"https://gateoverflow.in/"}}},{"type":"goal","text":{"en":"Give full-length mock tests regularly","hi":"नियमित रूप से पूर्ण-लंबाई वाले मॉक टेस्ट दें","te":"నియమితంగా పూర్తి-నిడివి మాక్ టెస్ట్‌లు ఇవ్వండి"}}]}]},
+                            "data_scientist": {"name":{"en":"Data Scientist","hi":"डेटा साइंटिस्ट","te":"డేటా సైంటిస్ట్"},"roadmap":[{"title":{"en":"Year 1: Math & Programming","hi":"वर्ष 1: गणित और प्रोग्रामिंग","te":"సంవత్సరం 1: గణితం & ప్రోగ్రామింగ్"},"content":[{"type":"subject","text":{"en":"Linear Algebra, Calculus, Probability","hi":"रैखिक बीजगणित, कलन, प्रायिकता","te":"లీనియర్ ఆల్జీబ్రా, కాలిక్యులస్, సంభావ్యత"}},{"type":"skill","text":{"en":"Python (NumPy, Pandas)","hi":"पायथन (नंपाई, पांडा)","te":"పైథాన్ (నంపై, పాండాస్)"}},{"type":"resource","text":{"en":{"title":"Khan Academy - Math for ML","url":"https://www.khanacademy.org/math/statistics-probability"},"hi":{"title":"खान अकादमी - एमएल के लिए गणित","url":"https://www.khanacademy.org/math/statistics-probability"},"te":{"title":"ఖాన్ అకాడమీ - ఎంఎల్ కోసం గణితం","url":"https://www.khanacademy.org/math/statistics-probability"}}}]},{"title":{"en":"Year 2: Core Machine Learning","hi":"वर्ष 2: कोर मशीन लर्निंग","te":"సంవత్సరం 2: కోర్ మెషిన్ లెర్నింగ్"},"content":[{"type":"subject","text":{"en":"Supervised & Unsupervised Learning","hi":"सुपरवाइज्ड और अनसुपरवाइज्ड लर्निंग","te":"పర్యవేక్షించబడిన & పర్యవేక్షించబడని అభ్యాసం"}},{"type":"skill","text":{"en":"Scikit-Learn, Data Visualization (Matplotlib, Seaborn)","hi":"स्किट-लर्न, डेटा विज़ुअलाइज़ेशन (मैटप्लोटलिब, सीबॉर्न)","te":"సైకిట్-లెర్న్, డేటా విజువలైజేషన్ (మాట్‌ప్లాట్‌లిబ్, సీబోర్న్)"}},{"type":"resource","text":{"en":{"title":"Kaggle - Courses and Competitions","url":"https://www.kaggle.com/"},"hi":{"title":"कैगल - पाठ्यक्रम और प्रतियोगिताएं","url":"https://www.kaggle.com/"},"te":{"title":"కాగిల్ - కోర్సులు మరియు పోటీలు","url":"https://www.kaggle.com/"}}}]}]},
+                            "cybersecurity": cybersecurityPath,
+                            "pm": { "name": { "en": "Product Management", "hi": "उत्पाद प्रबंधन", "te": "ప్రొడక్ట్ మేనేజ్‌మెంట్" }, "roadmap": [ { "title": { "en": "Year 2: Foundational Skills", "hi": "वर्ष 2: मूलभूत कौशल", "te": "సంవత్సరం 2: పునాది నైపుణ్యాలు" }, "content": [ { "type": "skill", "text": { "en": "Develop strong communication and presentation skills", "hi": "मजबूत संचार और प्रस्तुति कौशल विकसित करें", "te": "బలమైన కమ్యూనికేషన్ మరియు ప్రెజెంటేషన్ నైపుణ్యాలను అభివృద్ధి చేసుకోండి" } }, { "type": "subject", "text": { "en": "Understand basics of UI/UX design and market analysis", "hi": "यूआई/यूएक्स डिजाइन और बाजार विश्लेषण की मूल बातें समझें", "te": "UI/UX డిజైన్ మరియు మార్కెట్ విశ్లేషణ యొక్క ప్రాథమికాలను అర్థం చేసుకోండి" } } ] }, { "title": { "en": "Year 3: Experience", "hi": "वर्ष 3: अनुभव", "te": "సంవత్సరం 3: అనుభవం" }, "content": [ { "type": "goal", "text": { "en": "Take leadership roles in college clubs or events", "hi": "कॉलेज क्लबों या कार्यक्रमों में नेतृत्व की भूमिका निभाएं", "te": "కళాశాల క్లబ్‌లు లేదా ఈవెంట్‌లలో నాయకత్వ పాత్రలు తీసుకోండి" } }, { "type": "project", "text": { "en": "Do a case study on your favorite product and suggest improvements", "hi": "अपने पसंदीदा उत्पाद पर एक केस स्टडी करें और सुधार सुझाएं", "te": "మీకు ఇష్టమైన ఉత్పత్తిపై కేస్ స్టడీ చేయండి మరియు మెరుగుదలలను సూచించండి" } }, { "type": "resource", "text": { "en": { "title": "Read 'Inspired' by Marty Cagan", "url": "https://www.svpg.com/inspired-how-to-create-tech-products-customers-love/" }, "hi": { "title": "मार्टी कागन द्वारा 'इंस्पायर्ड' पढ़ें", "url": "https://www.svpg.com/inspired-how-to-create-tech-products-customers-love/" }, "te": { "title": "మార్టీ కాగన్ రచించిన 'ఇన్‌స్పైర్డ్' చదవండి", "url": "https://www.svpg.com/inspired-how-to-create-tech-products-customers-love/" } } } ] } ] },
+                            "ms_abroad": higherStudiesPath
+                        }
+                    },
+                    "it": {
+                        "name": { "en": "Information Technology (IT)", "hi": "सूचना प्रौद्योगिकी (आईटी)", "te": "ఇన్ఫర్మేషన్ టెక్నాలజీ (ఐటి)" },
+                        "goals": {
+                            "sde": sdePath,
+                            "cybersecurity": cybersecurityPath,
+                            "ms_abroad": higherStudiesPath
+                        }
+                    },
+                    "ece": {
+                        "name": { "en": "Electronics & Comm. (ECE)", "hi": "इलेक्ट्रॉनिक्स और संचार (ईसीई)", "te": "ఎలక్ట్రానిక్స్ & కమ్యూనికేషన్ (ఇసిఇ)" },
+                        "goals": {
+                            "core": {"name":{"en":"Core Jobs (VLSI/Embedded)","hi":"कोर जॉब्स (वीएलएसआई/एंबेडेड)","te":"కోర్ జాబ్స్ (విఎల్‌ఎస్‌ఐ/ఎంబెడెడ్)"},"roadmap":[{"title":{"en":"Year 2: Fundamentals","hi":"वर्ष 2: मूल बातें","te":"సంవత్సరం 2: ప్రాథమికాలు"},"content":[{"type":"subject","text":{"en":"Electronic Devices, Analog & Digital Circuits","hi":"इलेक्ट्रॉनिक उपकरण, एनालॉग और डिजिटल सर्किट","te":"ఎలక్ట్రానిక్ పరికరాలు, అనలాగ్ & డిజిటల్ సర్క్యూట్లు"}},{"type":"skill","text":{"en":"Learn Verilog/VHDL for RTL design","hi":"आरटीएल डिजाइन के लिए वेरिलॉग/वीएचडीएल सीखें","te":"ఆర్‌టిఎల్ డిజైన్ కోసం వెరిలాగ్/విహెచ్‌డిఎల్ నేర్చుకోండి"}}]},{"title":{"en":"Year 3: Advanced Topics","hi":"वर्ष 3: उन्नत विषय","te":"సంవత్సరం 3: అధునాతన అంశాలు"},"content":[{"type":"subject","text":{"en":"VLSI Design, Microprocessors & Microcontrollers","hi":"वीएलएसआई डिजाइन, माइक्रोप्रोसेसर और माइक्रोकंट्रोलर","te":"విఎల్‌ఎస్‌ఐ డిజైన్, మైక్రోప్రాసెసర్లు & మైక్రోకంట్రోలర్లు"}},{"type":"project","text":{"en":"Projects with Arduino/Raspberry Pi","hi":"Arduino/Raspberry Pi के साथ प्रोजेक्ट","te":"ఆర్డునో/రాస్ప్‌బెర్రీ పైతో ప్రాజెక్ట్‌లు"}}]}]},
+                            "it_jobs": itJobsPath,
+                            "ms_abroad": higherStudiesPath
+                        }
+                    },
+                    "eee": {
+                        "name": { "en": "Electrical & Electronics (EEE)", "hi": "इलेक्ट्रिकल और इलेक्ट्रॉनिक्स (ईईई)", "te": "ఎలక్ట్రికల్ & ఎలక్ట్రానిక్స్ (ఇఇఇ)" },
+                        "goals": {
+                            "core_power": {"name":{"en":"Core (Power Systems)","hi":"कोर (पावर सिस्टम)","te":"కోర్ (పవర్ సిస్టమ్స్)"},"roadmap":[{"title":{"en":"Year 2: Fundamentals","hi":"वर्ष 2: मूल बातें","te":"సంవత్సరం 2: ప్రాథమికాలు"},"content":[{"type":"subject","text":{"en":"Electrical Machines, Power Electronics, Control Systems","hi":"विद्युत मशीनें, पावर इलेक्ट्रॉनिक्स, नियंत्रण प्रणाली","te":"ఎలక్ట్రికల్ మెషీన్లు, పవర్ ఎలక్ట్రానిక్స్, కంట్రోల్ సిస్టమ్స్"}},{"type":"skill","text":{"en":"MATLAB/Simulink for simulations","hi":"सिमुलेशन के लिए मैटलैब/सिमुलिंक","te":"సిమ్యులేషన్ల కోసం మాట్‌ల్యాబ్/సిమ్యులింక్"}}]},{"title":{"en":"Year 3: Specialization","hi":"वर्ष 3: विशेषज्ञता","te":"సంవత్సరం 3: స్పెషలైజేషన్"},"content":[{"type":"subject","text":{"en":"Power System Analysis, Switchgear & Protection","hi":"पावर सिस्टम विश्लेषण, स्विचगियर और संरक्षण","te":"పవర్ సిస్టమ్ విశ్లేషణ, స్విచ్‌గేర్ & ప్రొటెక్షన్"}},{"type":"skill","text":{"en":"Basics of ETAP/PSCAD software","hi":"ETAP/PSCAD सॉफ्टवेयर की मूल बातें","te":"ETAP/PSCAD సాఫ్ట్‌వేర్ బేసిక్స్"}}]}]},
+                            "it_jobs": itJobsPath,
+                            "govt_jobs": govtJobPath
+                        }
+                    },
+                    "mech": {
+                        "name": { "en": "Mechanical Engineering", "hi": "मैकेनिकल इंजीनियरिंग", "te": "మెకానికల్ ఇంజనీరింగ్" },
+                        "goals": {
+                            "core": {"name":{"en":"Core (Design/Manufacturing)","hi":"कोर जॉब्स (डिजाइन/विनिर्माण)","te":"కోర్ జాబ్స్ (డిజైన్/తయారీ)"},"roadmap":[{"title":{"en":"Year 2: Basics","hi":"वर्ष 2: मूल बातें","te":"సంవత్సరం 2: ప్రాథమికాలు"},"content":[{"type":"subject","text":{"en":"Thermodynamics, Strength of Materials","hi":"थर्मोडायनामिक्स, सामग्री की ताकत","te":"థర్మోడైనమిక్స్, మెటీరియల్స్ యొక్క బలం"}},{"type":"skill","text":{"en":"AutoCAD, SolidWorks","hi":"ऑटोकैड, सॉलिडवर्क्स","te":"ఆటోకాడ్, సాలిడ్‌వర్క్స్"}}]},{"title":{"en":"Year 3: Design","hi":"वर्ष 3: डिजाइन","te":"సంవత్సరం 3: డిజైన్"},"content":[{"type":"subject","text":{"en":"Machine Design, Heat Transfer","hi":"मशीन डिजाइन, गर्मी हस्तांतरण","te":"మెషిన్ డిజైన్, హీట్ ట్రాన్స్‌ఫర్"}},{"type":"skill","text":{"en":"Ansys/CATIA","hi":"एंसिस/कैटिया","te":"ఆన్సిస్/కాటియా"}}]}]},
+                            "it_jobs": itJobsPath,
+                            "govt_jobs": govtJobPath,
+                            "ms_abroad": higherStudiesPath
+                        }
+                    },
+                    "civil": {
+                        "name": { "en": "Civil Engineering", "hi": "सिविल इंजीनियरिंग", "te": "సివిల్ ఇంజనీరింగ్" },
+                        "goals": {
+                            "core_structure": {"name":{"en":"Core (Structural)","hi":"कोर (संरचनात्मक)","te":"కోర్ (నిర్మాణ)"},"roadmap":[{"title":{"en":"Year 2: Concepts","hi":"वर्ष 2: अवधारणाएं","te":"సంవత్సరం 2: భావనలు"},"content":[{"type":"subject","text":{"en":"Surveying, Strength of Materials","hi":"सर्वेक्षण, सामग्री की ताकत","te":"సర్వేయింగ్, మెటీరియల్స్ యొక్క బలం"}},{"type":"skill","text":{"en":"AutoCAD","hi":"ऑटोकैड","te":"ఆటోకాడ్"}}]},{"title":{"en":"Year 3: Design","hi":"वर्ष 3: डिजाइन","te":"సంవత్సరం 3: డిజైన్"},"content":[{"type":"subject","text":{"en":"Structural Analysis, Concrete & Steel Design","hi":"संरचनात्मक विश्लेषण, कंक्रीट और स्टील डिजाइन","te":"నిర్మాణ విశ్లేషణ, కాంక్రీట్ & స్టీల్ డిజైన్"}},{"type":"skill","text":{"en":"STAAD.Pro / Etabs","hi":"स्टैड.प्रो / ईटैब्स","te":"స్టాడ్.ప్రో / ఇటాబ్స్"}}]}]},
+                            "it_jobs": itJobsPath,
+                            "govt_jobs": govtJobPath
+                        }
+                    },
+                    "chem": {
+                        "name": { "en": "Chemical Engineering", "hi": "केमिकल इंजीनियरिंग", "te": "కెమికల్ ఇంజనీరింగ్" },
+                        "goals": {
+                            "core": {
+                                "name": { "en": "Core (Process Engineer)", "hi": "कोर (प्रोसेस इंजीनियर)", "te": "కోర్ (ప్రాసెస్ ఇంజనీర్)" },
+                                "roadmap": [
+                                    { "title": { "en": "Year 2: Fundamentals", "hi": "वर्ष 2: मूल बातें", "te": "సంవత్సరం 2: ప్రాథమికాలు" }, "content": [
+                                        { "type": "subject", "text": { "en": "Chemical Process Calculations, Thermodynamics", "hi": "रासायनिक प्रक्रिया गणना, ऊष्मप्रवैगिकी", "te": "రసాయన ప్రక్రియ గణనలు, థర్మోడైనమిక్స్" } },
+                                        { "type": "skill", "text": { "en": "Learn Aspen HYSYS/Plus basics", "hi": "एस्पेन HYSYS/प्लस की मूल बातें सीखें", "te": "ఆస్పెన్ HYSYS/ప్లస్ బేసిక్స్ నేర్చుకోండి" } }
+                                    ]},
+                                    { "title": { "en": "Year 3: Core Subjects", "hi": "वर्ष 3: मुख्य विषय", "te": "సంవత్సరం 3: ప్రధాన సబ్జెక్టులు" }, "content": [
+                                        { "type": "subject", "text": { "en": "Mass Transfer, Heat Transfer, Chemical Reaction Engineering", "hi": "मास ट्रांसफर, हीट ट्रांसफर, केमिकल रिएक्शन इंजीनियरिंग", "te": "మాస్ ట్రాన్స్‌ఫర్, హీట్ ట్రాన్స్‌ఫర్, కెమికల్ రియాక్షన్ ఇంజనీరింగ్" } },
+                                        { "type": "goal", "text": { "en": "Apply for internships in chemical plants", "hi": "रासायनिक संयंत्रों में इंटर्नशिप के लिए आवेदन करें", "te": "రసాయన ప్లాంట్లలో ఇంటర్న్‌షిప్‌ల కోసం దరఖాస్తు చేసుకోండి" } }
+                                    ]}
+                                ]
+                            }
+                        }
+                    }
+                });
+                
+                Object.assign(translations, {
+                    en: {
+                        title: "B.Tech Roadmap Hub", subtitle: "Your AI-powered guide to a successful engineering career.",
+                        filter_branch: "Branch", filter_goal: "Career Goal", search_label: "Search Topics",
+                        no_roadmap_title: "Select a Roadmap", no_roadmap_desc: "Choose your branch and career goal to see your personalized path.",
+                        select_goal_title: "Almost there!", select_goal_desc: "Now, please select your career goal to view the roadmap.",
+                        no_results_title: "No Results Found", no_results_desc: "Try adjusting your search or filter criteria.",
+                        progress: "Progress", resources: "Resources", subjects: "Subjects", skills: "Skills", projects: "Projects", goals: "Goals",
+                    },
+                    hi: {
+                        title: "बी.टेक रोडमैप हब", subtitle: "एक सफल इंजीनियरिंग करियर के लिए आपका एआई-संचालित मार्गदर्शक।",
+                        filter_branch: "शाखा", filter_goal: "कैरियर लक्ष्य", search_label: "विषय खोजें",
+                        no_roadmap_title: "एक रोडमैप चुनें", no_roadmap_desc: "अपना व्यक्तिगत पथ देखने के लिए अपनी शाखा और कैरियर लक्ष्य चुनें।",
+                        select_goal_title: "लगभग हो गया!", select_goal_desc: "अब, रोडमैप देखने के लिए कृपया अपना कैरियर लक्ष्य चुनें।",
+                        no_results_title: "कोई परिणाम नहीं मिला", no_results_desc: "अपनी खोज या फ़िल्टर मानदंड समायोजित करने का प्रयास करें।",
+                        progress: "प्रगति", resources: "संसाधन", subjects: "विषय", skills: "कौशल", projects: "परियोजनाएं", goals: "लक्ष्य",
+                    },
+                    te: {
+                        title: "బి.టెక్ రోడ్‌మ్యాప్ హబ్", subtitle: "విజయవంతమైన ఇంజనీరింగ్ కెరీర్ కోసం మీ AI- శక్తితో కూడిన గైడ్.",
+                        filter_branch: "బ్రాంచ్", filter_goal: "కెరీర్ లక్ష్యం", search_label: "అంశాలను శోధించండి",
+                        no_roadmap_title: "ఒక రోడ్‌మ్యాప్‌ను ఎంచుకోండి", no_roadmap_desc: "మీ వ్యక్తిగత మార్గాన్ని చూడటానికి మీ బ్రాంచ్ మరియు కెరీర్ లక్ష్యాన్ని ఎంచుకోండి.",
+                        select_goal_title: "దాదాపు పూర్తయింది!", select_goal_desc: "ఇప్పుడు, రోడ్‌మ్యాప్‌ను వీక్షించడానికి దయచేసి మీ కెరీర్ లక్ష్యాన్ని ఎంచుకోండి.",
+                        no_results_title: "ఫలితాలు కనుగొనబడలేదు", no_results_desc: "మీ శోధన లేదా ఫిల్టర్ ప్రమాణాలను సర్దుబాటు చేయడానికి ప్రయత్నించండి.",
+                        progress: "పురోగతి", resources: "వనరులు", subjects: "సబ్జెక్టులు", skills: "నైపుణ్యాలు", projects: "ప్రాజెక్ట్‌లు", goals: "లక్ష్యాలు",
+                    }
+                });
+                
+                Object.assign(quotes, {
+                    en: [ "The best way to predict the future is to create it.", "Success is not final, failure is not fatal: it is the courage to continue that counts.", "Believe you can and you're halfway there." ],
+                    hi: [ "भविष्य की भविष्यवाणी करने का सबसे अच्छा तरीका उसे बनाना है।", "सफलता अंतिम नहीं है, असफलता घातक नहीं है: यह जारी रखने का साहस है जो मायने रखता है।", "विश्वास करो कि तुम कर सकते हो और तुम आधे रास्ते पर हो।" ],
+                    te: [ "భవిష్యత్తును అంచనా వేయడానికి ఉత్తమ మార్గం దానిని సృష్టించడం।", "విజయం అంతిమమైనది కాదు, వైఫల్యం ప్రాణాంతకం కాదు: కొనసాగించే ధైర్యమే ముఖ్యం।", "మీరు చేయగలరని నమ్మండి మరియు మీరు సగం దూరం చేరుకున్నట్లే।" ]
+                });
+            }
+
+
+            // --- EVENT LISTENERS ---
+            function setupEventListeners() {
+                branchSelect.addEventListener('change', handleFilterChange);
+                goalSelect.addEventListener('change', handleFilterChange);
+                searchInput.addEventListener('input', () => renderRoadmap(currentBranch, currentGoal));
+                darkModeToggle.addEventListener('click', toggleDarkMode);
+                langButtons.forEach(button => {
+                    button.addEventListener('click', () => setLanguage(button.dataset.lang));
+                });
+                roadmapContainer.addEventListener('change', handleProgressChange);
+                roadmapContainer.addEventListener('click', (e) => {
+                    handleCollapsibleClick(e);
+                    handleGeminiClick(e);
+                });
+                aiModalClose.addEventListener('click', closeAiModal);
+                aiModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === aiModalOverlay) {
+                        closeAiModal();
+                    }
+                });
+            }
+            
+            // --- UI RENDERING ---
+            function populateDropdowns() {
+                branchSelect.innerHTML = `<option value="">-- ${translations[currentLang]?.filter_branch || 'Branch'} --</option>`;
+                for (const branchKey in roadmapData) {
+                    const branch = roadmapData[branchKey];
+                    if (branch && branch.name) {
+                        const option = document.createElement('option');
+                        option.value = branchKey;
+                        option.textContent = branch.name[currentLang] || branch.name.en;
+                        branchSelect.appendChild(option);
+                    }
+                }
+                goalSelect.innerHTML = `<option value="">-- ${translations[currentLang]?.filter_goal || 'Career Goal'} --</option>`;
+                goalSelect.disabled = true;
+            }
+
+            function updateGoalDropdown(branchKey) {
+                if (branchKey && roadmapData[branchKey]) {
+                    const goals = roadmapData[branchKey].goals;
+                    goalSelect.innerHTML = `<option value="">-- ${translations[currentLang]?.filter_goal || 'Career Goal'} --</option>`;
+                    for (const goalKey in goals) {
+                        const goalData = goals[goalKey];
+                        if (goalData && goalData.name) {
+                            const option = document.createElement('option');
+                            option.value = goalKey;
+                            option.textContent = goalData.name[currentLang] || goalData.name.en;
+                            goalSelect.appendChild(option);
+                        }
+                    }
+                    goalSelect.disabled = false;
+                } else {
+                    goalSelect.innerHTML = `<option value="">-- ${translations[currentLang]?.filter_goal || 'Career Goal'} --</option>`;
+                    goalSelect.disabled = true;
+                }
+            }
+
+            function renderRoadmap(branchKey, goalKey) {
+                roadmapContainer.innerHTML = '';
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+                if (!branchKey) {
+                    messageContainer.classList.remove('hidden');
+                    updateMessage('no_roadmap_title', 'no_roadmap_desc');
+                    return;
+                }
+                if (!goalKey) {
+                    messageContainer.classList.remove('hidden');
+                    updateMessage('select_goal_title', 'select_goal_desc');
+                    return;
+                }
+
+                const roadmap = roadmapData[branchKey]?.goals[goalKey]?.roadmap;
+                if (!roadmap) {
+                    messageContainer.classList.remove('hidden');
+                    updateMessage('no_roadmap_title', 'no_roadmap_desc');
+                    return;
+                }
+
+                let visibleTasks = 0;
+                let completedVisibleTasks = 0;
+                let hasVisibleContent = false;
+
+                const roadmapHtml = roadmap.map((phase, phaseIndex) => {
+                    const phaseId = `${branchKey}-${goalKey}-${phaseIndex}`;
+                    
+                    const contentHtml = phase.content.map((item, itemIndex) => {
+                        const langText = item.text[currentLang] || item.text.en;
+                        const itemTextForSearch = (typeof langText === 'object' && langText !== null) ? langText.title : langText;
+                        
+                        if (searchTerm && (!itemTextForSearch || !itemTextForSearch.toLowerCase().includes(searchTerm))) {
+                            return '';
+                        }
+
+                        hasVisibleContent = true;
+                        visibleTasks++;
+                        const itemId = `${phaseId}-${itemIndex}`;
+                        const isChecked = progress[itemId] || false;
+                        if (isChecked) completedVisibleTasks++;
+
+                        const icon = getIconForItemType(item.type);
+                        let textHtml;
+                        let geminiButtonHtml = '';
+
+                        if (item.type === 'resource' && typeof langText === 'object' && langText !== null) {
+                            textHtml = `<a href="${langText.url}" target="_blank" rel="noopener noreferrer" class="resource-link">${langText.title}</a>`;
+                            geminiButtonHtml = `<button class="gemini-btn" data-gemini-type="resource" data-prompt-text="${langText.title}">✨ Find More</button>`;
+                        } else {
+                            textHtml = showdownConverter.makeHtml(itemTextForSearch || '');
+                            if (item.type === 'project') {
+                                geminiButtonHtml = `<button class="gemini-btn" data-gemini-type="project" data-prompt-text="${itemTextForSearch}">✨ Generate Ideas</button>`;
+                            }
+                        }
+
+                        return `
+                            <li class="flex items-start space-x-3 py-2">
+                                <input type="checkbox" id="${itemId}" data-item-id="${itemId}" class="form-checkbox h-5 w-5 rounded text-blue-500 mt-1 focus:ring-blue-500" ${isChecked ? 'checked' : ''}>
+                                <label for="${itemId}" class="flex-1 text-slate-700 dark:text-slate-300 ${isChecked ? 'line-through text-slate-500' : ''}">
+                                    <span class="mr-2">${icon}</span>
+                                    <span>${textHtml}</span>
+                                    ${geminiButtonHtml}
+                                </label>
+                            </li>
+                        `;
+                    }).join('');
+
+                    if (!contentHtml) return '';
+
+                    return `
+                        <div class="card rounded-xl shadow-lg overflow-hidden transition-all duration-300">
+                            <button data-collapsible-trigger="${phaseId}" class="w-full text-left p-4 flex justify-between items-center bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700">
+                                <h3 class="text-xl font-semibold text-blue-600 dark:text-blue-400">${phase.title[currentLang] || phase.title.en}</h3>
+                                <svg class="w-6 h-6 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="${phaseId}" data-collapsible-content class="p-5" style="max-height: 5000px;">
+                                <ul class="divide-y divide-slate-200 dark:divide-slate-700">
+                                    ${contentHtml}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (!hasVisibleContent && searchTerm) {
+                    messageContainer.classList.remove('hidden');
+                    updateMessage('no_results_title', 'no_results_desc');
+                } else {
+                    messageContainer.classList.add('hidden');
+                }
+                
+                const progressBarHtml = `
+                    <div class="mb-6 card p-4 rounded-xl shadow-md">
+                        <h4 class="font-semibold mb-2" data-lang-key="progress">${translations[currentLang]?.progress || 'Progress'}</h4>
+                        <div class="w-full progress-bar-bg rounded-full h-4 dark:bg-slate-700">
+                            <div id="progress-bar" class="progress-bar-fill h-4 rounded-full transition-all duration-500" style="width: ${visibleTasks > 0 ? (completedVisibleTasks / visibleTasks) * 100 : 0}%"></div>
+                        </div>
+                        <p class="text-right text-sm mt-1 text-slate-500">${completedVisibleTasks} / ${visibleTasks}</p>
+                    </div>
+                `;
+
+                roadmapContainer.innerHTML = (visibleTasks > 0 ? progressBarHtml : '') + roadmapHtml;
+            }
+            
+            function handleCollapsibleClick(e) {
+                const trigger = e.target.closest('[data-collapsible-trigger]');
+                if (trigger) {
+                    const content = document.getElementById(trigger.dataset.collapsibleTrigger);
+                    const icon = trigger.querySelector('svg');
+                    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                        content.style.maxHeight = '0px';
+                        icon.style.transform = 'rotate(-90deg)';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+
+            async function handleGeminiClick(e) {
+                const button = e.target.closest('[data-gemini-type]');
+                if (!button) return;
+
+                const type = button.dataset.geminiType;
+                const promptText = button.dataset.promptText;
+                let prompt = '';
+
+                if (type === 'project') {
+                    aiModalTitle.textContent = "✨ AI Project Ideas";
+                    prompt = `Based on the project goal "${promptText}", generate 3 creative and specific project ideas suitable for a B.Tech student's resume. For each idea, provide a brief description (2-3 sentences) and list the key technologies that would be used. Format the output as clean HTML using Tailwind CSS classes for styling (e.g., <div class="mb-4">, <h4 class="font-bold">, <p>, <strong>). Do not include <html> or <body> tags.`;
+                } else if (type === 'resource') {
+                    aiModalTitle.textContent = "✨ AI Resource Finder";
+                    prompt = `Find 3 high-quality alternative online resources to "${promptText}". The resources should be suitable for a B.Tech student. For each resource, provide its name, a direct URL, and a one-sentence description of why it's a good alternative. Format the output as a simple HTML unordered list (<ul>) with each item containing a link (<a>) and a description. Use Tailwind CSS classes for styling. Do not include <html> or <body> tags.`;
+                }
+
+                if (!prompt) return;
+
+                openAiModal(true);
+
+                try {
+                    let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const generatedText = result.candidates[0].content.parts[0].text;
+                        aiModalContent.innerHTML = showdownConverter.makeHtml(generatedText);
+                    } else {
+                        throw new Error("Invalid response structure from API.");
+                    }
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    aiModalContent.innerHTML = `<p class="text-red-500">Sorry, something went wrong while fetching AI suggestions. Please try again later.</p><p class="text-sm text-slate-400 mt-2">${error.message}</p>`;
+                } finally {
+                    openAiModal(false);
+                }
+            }
+
+            function openAiModal(isLoading = false) {
+                aiModalOverlay.classList.remove('hidden');
+                if (isLoading) {
+                    aiModalContent.innerHTML = '<div class="flex justify-center items-center p-8"><div class="loader"></div></div>';
+                }
+            }
+
+            function closeAiModal() {
+                aiModalOverlay.classList.add('hidden');
+                aiModalContent.innerHTML = '';
+            }
+            
+            function getIconForItemType(type) {
+                const icons = { subject: '📚', skill: '💻', resource: '🔗', project: '🚀', goal: '🎯' };
+                return `<span title="${translations[currentLang]?.[type+'s'] || type}" class="text-lg">${icons[type] || '🔹'}</span>`;
+            }
+
+            function updateUI() {
+                updateLanguageUI();
+                updateGoalDropdown(currentBranch);
+                branchSelect.value = currentBranch;
+                goalSelect.value = currentGoal;
+                renderRoadmap(currentBranch, currentGoal);
+            }
+            
+            function updateMessage(titleKey, descKey) {
+                const titleEl = messageContainer.querySelector('h3');
+                const descEl = messageContainer.querySelector('p');
+                titleEl.textContent = translations[currentLang]?.[titleKey] || '';
+                titleEl.dataset.langKey = titleKey;
+                descEl.textContent = translations[currentLang]?.[descKey] || '';
+                descEl.dataset.langKey = descKey;
+            }
+
+            function handleFilterChange(e) {
+                const isBranchChange = e.target.id === 'branch-select';
+                currentBranch = branchSelect.value;
+                
+                if (isBranchChange) {
+                    goalSelect.value = '';
+                    updateGoalDropdown(currentBranch);
+                }
+                currentGoal = goalSelect.value;
+                
+                saveCurrentRoadmap();
+                renderRoadmap(currentBranch, currentGoal);
+            }
+
+            function handleProgressChange(e) {
+                if (e.target.matches('input[type="checkbox"]')) {
+                    const itemId = e.target.dataset.itemId;
+                    progress[itemId] = e.target.checked;
+                    saveProgress();
+                    renderRoadmap(currentBranch, currentGoal);
+                }
+            }
+
+            function saveProgress() { localStorage.setItem('roadmapProgress', JSON.stringify(progress)); }
+            function loadProgress() {
+                const saved = localStorage.getItem('roadmapProgress');
+                if (saved) progress = JSON.parse(saved);
+            }
+            function saveCurrentRoadmap() { localStorage.setItem('savedRoadmap', JSON.stringify({ branch: currentBranch, goal: currentGoal })); }
+            function loadSavedRoadmap() {
+                const saved = localStorage.getItem('savedRoadmap');
+                if (saved) {
+                    const { branch, goal } = JSON.parse(saved);
+                    currentBranch = branch;
+                    currentGoal = goal;
+                }
+            }
+
+            function toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+                const isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('darkMode', isDark);
+                updateDarkModeIcons(isDark);
+            }
+            function loadDarkMode() {
+                const isDark = localStorage.getItem('darkMode') === 'true';
+                if (isDark) document.documentElement.classList.add('dark');
+                updateDarkModeIcons(isDark);
+            }
+            function updateDarkModeIcons(isDark) {
+                sunIcon.classList.toggle('hidden', isDark);
+                moonIcon.classList.toggle('hidden', !isDark);
+            }
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('language', lang);
+                updateUI();
+                displayRandomQuote();
+            }
+            function loadLanguage() {
+                currentLang = localStorage.getItem('language') || 'en';
+            }
+            function updateLanguageUI() {
+                document.querySelectorAll('[data-lang-key]').forEach(el => {
+                    const key = el.dataset.langKey;
+                    if (translations[currentLang] && translations[currentLang][key]) {
+                        el.textContent = translations[currentLang][key];
+                    }
+                });
+                langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLang));
+                populateDropdowns();
+                branchSelect.value = currentBranch;
+                updateGoalDropdown(currentBranch);
+                goalSelect.value = currentGoal;
+                searchInput.placeholder = translations[currentLang]?.search_label ? `${translations[currentLang].search_label}...` : 'Search...';
+            }
+            
+            function displayRandomQuote() {
+                const langQuotes = quotes[currentLang];
+                if (langQuotes && langQuotes.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * langQuotes.length);
+                    quoteContainer.textContent = langQuotes[randomIndex];
+                }
+            }
+            
+            init();
+        });
+    </script>
+</body>
+</html>
